@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:16:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/07 18:51:25 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/09 12:39:44 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -26,8 +26,13 @@ t_flist *add_list_element(t_flist *f, int fd)
 	if (!element)
 		return (NULL);
 	element->fd = fd;
-	element->byte_read = 0;
-	element->buffer = NULL;
+	element->buffer = (char *) malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+	{
+		free(element);
+		return (NULL);
+	}
+	element->buffer[0] = 0;
 	element->next = NULL;
 	if (f)
 		f->next = element;
@@ -44,36 +49,19 @@ size_t	ft_strlen(const char *str)
 	return (length);
 }
 
-char	*ft_strdup(const char	*src)
+char	*ft_strncat(char	*dest, char	*src, unsigned int nb)
 {
-	char	*dest;
-
-	if (!src)
-		return (NULL);
-	dest = malloc((ft_strlen(src) + 1) * sizeof(char));
-	if (dest == NULL)
-		return (NULL);
-	dest[0] = 0;
-	ft_strlcat(dest, src, ft_strlen(src) + 1);
-	return (dest);
-}
-
-size_t	ft_strlcat(char	*dest, const char *src, size_t	size)
-{
-	size_t	i;
-	size_t	dest_len;
-	size_t	src_len;
+	unsigned int	dest_len;
+	unsigned int	i;
 
 	i = 0;
 	dest_len = ft_strlen(dest);
-	src_len = ft_strlen(src);
-//	if (dest_len >= size || size == 0)
-//		return (size + src_len);
-	while (i  < size - 1 && src[i])
+	while (src[i] && i < nb)
 	{
-		dest[i + dest_len] = src[i];
+		dest[dest_len] = src[i];
 		i++;
+		dest_len++;
 	}
-	dest[i + dest_len] = '\0';
-	return (src_len + dest_len);
+	dest[dest_len] = '\0';
+	return (dest);
 }
