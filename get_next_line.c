@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:15:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/09 12:42:11 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/09 15:03:40 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@
 */
 
 
-static t_flist	*first; //FIXME move to gnl func
 
+/*
 void	print_list() //FIXME delete
 {
 	t_flist *f = first;
@@ -45,32 +45,42 @@ void	print_list() //FIXME delete
 		printf("\n");
 		f = f->next;
 	}
-}
+} */
 
-
-int	find_char_index(char *str)
+char	*expand_buffer(t_flist *elem, char *buf, int bytes)
 {
-	int	i;
-
+	char	*temp;
+	char	*res;
+	size_t	i;
+	
 	i = 0;
-	while(str[i])
-	{
-		if (str[i] == '\n')
-			return (i);
+	temp = (char *) malloc(ft_strlen(elem->buffer) + bytes + 1);
+	if (!temp)
+		return (NULL);
+	res = NULL;
+	temp[0] = 0;
+	ft_strncat(temp, elem->buffer, ft_strlen(elem->buffer));
+	ft_strncat(temp, buf, bytes);
+	free(elem->buffer);
+	while (temp[i] && temp[i] != '\n')
 		i++;
+	if (temp[i] == '\n')
+	{
+		elem->buffer = ft_strdup(&temp[i + 1]);
+		temp[i + 1] = 0;
+		res = ft_strdup(temp);
+		free(temp);
 	}
-	return (-1);
-}
-int	expand_buffer(t_flist *elem, char *buf)
-{
-	//EXPAND, MALLOC, \n CHARACTER LOOKING
+	else
+		elem->buffer = temp;
+	return (res);
 }
 
 char *read_bfrsep(t_flist *elem)
 {
 	int	read_bytecount;
 	char	*buf;
-	char	*temp;
+	char	*res;
 
 	buf = (char *) malloc(BUFFER_SIZE + 1);
 	read_bytecount = 0;
@@ -79,16 +89,12 @@ char *read_bfrsep(t_flist *elem)
 	while ((read_bytecount = read(elem->fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[read_bytecount] = 0;
-		temp = (char *) malloc(ft_strlen(elem->buffer) + read_bytecount + 1);
-		if (!temp)
-			return (NULL);
-		temp[0] = 0;
-		ft_strncat(temp, elem->buffer, ft_strlen(elem->buffer));
-		ft_strncat(temp, buf, read_bytecount);
-		free(elem->buffer);
-		elem->buffer = temp;
-		if (find_char_index(elem->buffer != -1))
-			break;
+		res = expand_buffer(elem, buf, read_bytecount);
+		if (res)
+		{
+			free(buf);
+			return (res);
+		}
 	}
 	free(buf);
 	return (NULL);
@@ -96,7 +102,7 @@ char *read_bfrsep(t_flist *elem)
 
 char *get_next_line(int fd)
 {
-	//FIXME FIRST
+	static t_flist	*first; //FIXME move to gnl func
 	t_flist			*current;
 
 	if (fd < 0)
@@ -105,7 +111,5 @@ char *get_next_line(int fd)
 		first = add_list_element(NULL, fd);
 	if(!(current = get_flist(first, fd)))
 		current = add_list_element(first, fd);
-	if (!current || !first)
-		return (NULL);
 	return (read_bfrsep(current)); //FIXME existant fd
 }

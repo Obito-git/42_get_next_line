@@ -8,8 +8,11 @@ int main(int ac, char **av)
 	int fd_open1;
 	int fd_open2;
 	fd_open1 = open("test/test.txt", 'r');
-	printf("%s", get_next_line(fd_open1));
-	printf("%s", get_next_line(fd_open1));
+	if (fd_open1 <= 0)
+		printf("XYU");
+	else
+		printf("%s", get_next_line(fd_open1));
+//	printf("%s", get_next_line(fd_open1));
 //	printf("%s", get_next_line(fd_open1));
 //	print_list();
 	close(fd_open1);

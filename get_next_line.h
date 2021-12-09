@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:13:15 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/09 12:33:28 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:44:30 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ typedef struct s_flist
 {
 	int					fd;
 	int				byte_read;
-	int					is_read; //FIXME not used
 	char				*buffer;
 	struct s_flist		*next;
 }				t_flist;
@@ -33,7 +32,7 @@ typedef struct s_flist
 int	find_char_index(char *str);//FIXME DELETE
 void	print_list(); //FIXME
 char *get_next_line(int fd);
-char	*ft_strncat(char	*dest, char	*src, unsigned int nb);
+char	*ft_strncat(char *dest, const char *src, unsigned int nb);
 char	*ft_strdup(const char	*src);
 size_t	ft_strlen(const char *str);
 t_flist	*get_flist(t_flist *f, int fd);

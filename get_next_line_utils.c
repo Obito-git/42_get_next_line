@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:16:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/09 12:39:44 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:58:51 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -27,7 +27,7 @@ t_flist *add_list_element(t_flist *f, int fd)
 		return (NULL);
 	element->fd = fd;
 	element->buffer = (char *) malloc(BUFFER_SIZE + 1);
-	if (!buffer)
+	if (!element->buffer)
 	{
 		free(element);
 		return (NULL);
@@ -49,7 +49,7 @@ size_t	ft_strlen(const char *str)
 	return (length);
 }
 
-char	*ft_strncat(char	*dest, char	*src, unsigned int nb)
+char	*ft_strncat(char *dest, const char *src, unsigned int nb)
 {
 	unsigned int	dest_len;
 	unsigned int	i;
@@ -63,5 +63,19 @@ char	*ft_strncat(char	*dest, char	*src, unsigned int nb)
 		dest_len++;
 	}
 	dest[dest_len] = '\0';
+	return (dest);
+}
+
+char	*ft_strdup(const char *src)
+{
+	char	*dest;
+
+	if (!src)
+		return (NULL);
+	dest = malloc((ft_strlen(src) + 1) * sizeof(char));
+	if (dest == NULL)
+		return (NULL);
+	dest[0] = 0;
+	ft_strncat(dest, src, ft_strlen(src));
 	return (dest);
 }
