@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:13:15 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/14 09:57:10 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/14 11:33:46 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	print_list(); //FIXME
 t_felement *init_elem(int fd);
 char *get_next_line(int fd);
 char	*ft_strjoin(char *from, char *to, size_t size);
-char	*ft_strncat(char *dest, const char *src, unsigned int nb);
+int	get_nlpos(char *str);
 char	*ft_strdup(const char	*src);
 size_t	ft_strlen(const char *str);
 

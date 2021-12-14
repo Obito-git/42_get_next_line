@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:16:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/14 10:35:10 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/14 11:03:10 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -29,6 +29,20 @@ t_felement *init_elem(int fd)
 	return (elem);
 }
 
+int	get_nlpos(char *str)
+{
+	size_t	i;
+
+	i = 0;
+	if (!str)
+		return (-1);
+	while (str[i] && str[i] != '\n')
+		i++;
+	if (str[i] == '\n')
+		return (i);
+	return (-1);
+}
+
 size_t	ft_strlen(const char *str)
 {
 	int	length;
@@ -39,34 +53,23 @@ size_t	ft_strlen(const char *str)
 	return (length);
 }
 
-char	*ft_strncat(char *dest, const char *src, unsigned int nb)
-{
-	unsigned int	dest_len;
-	unsigned int	i;
-
-	i = 0;
-	dest_len = ft_strlen(dest);
-	while (src[i] && i < nb)
-	{
-		dest[dest_len] = src[i];
-		i++;
-		dest_len++;
-	}
-	dest[dest_len] = '\0';
-	return (dest);
-}
-
 char	*ft_strdup(const char *src)
 {
 	char	*dest;
+	size_t	i;
 
 	if (!src)
 		return (NULL);
 	dest = (char *) malloc((ft_strlen(src) + 1) * sizeof(char));
 	if (dest == NULL)
 		return (NULL);
-	dest[0] = 0;
-	ft_strncat(dest, src, ft_strlen(src));
+	i = 0;
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
 	return (dest);
 }
 
