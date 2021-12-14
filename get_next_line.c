@@ -6,13 +6,13 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:15:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/14 12:25:26 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/14 18:24:33 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*check_buffer(t_felement *elem, int nl_index)
+char	*check_buffer(t_felement *elem, int nl_index, int bytes)
 {
 	char	*tmp;
 
@@ -33,8 +33,9 @@ char	*check_buffer(t_felement *elem, int nl_index)
 	else
 	{
 		elem->line = elem->buffer;
-		elem->buffer = ft_strdup("");
-		if (!elem->buffer)
+		if (bytes < BUFFER_SIZE)
+			elem->buffer = ft_strdup("");
+		if (bytes == BUFFER_SIZE && !elem->buffer)
 			return (NULL);
 	}
 	return (elem->line);
@@ -52,9 +53,11 @@ char	*read_bfrsep(t_felement *elem)
 	if (elem->line)
 		elem->line = NULL;
 	nl_index = get_nlpos(elem->buffer);
-	while (nl_index < 0
-		&& (read_bytecount = read(elem->fd, buf, BUFFER_SIZE)) > 0)
+	while (nl_index < 0)
 	{
+		read_bytecount = read(elem->fd, buf, BUFFER_SIZE);
+		if (read_bytecount < 1)
+			break;
 		buf[read_bytecount] = 0;
 		elem->buffer = ft_strjoin(elem->buffer, buf, BUFFER_SIZE);
 		if (!elem->buffer)
@@ -62,7 +65,7 @@ char	*read_bfrsep(t_felement *elem)
 		nl_index = get_nlpos(elem->buffer);
 	}
 	free(buf);
-	return (check_buffer(elem, nl_index));
+	return (check_buffer(elem, nl_index, read_bytecount));
 }
 
 char	*get_next_line(int fd)
