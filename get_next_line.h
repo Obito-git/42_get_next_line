@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:13:15 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/09 14:44:30 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/14 09:57:10 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,26 @@
 # define GNL_H
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
+# define BUFFER_SIZE 1
 # endif
 
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h> //FIXME
 
-typedef struct s_flist
+typedef struct s_felement
 {
 	int					fd;
-	int				byte_read;
+	char				*line;
 	char				*buffer;
-	struct s_flist		*next;
-}				t_flist;
+}				t_felement;
 
-int	find_char_index(char *str);//FIXME DELETE
 void	print_list(); //FIXME
+t_felement *init_elem(int fd);
 char *get_next_line(int fd);
+char	*ft_strjoin(char *from, char *to, size_t size);
 char	*ft_strncat(char *dest, const char *src, unsigned int nb);
 char	*ft_strdup(const char	*src);
 size_t	ft_strlen(const char *str);
-t_flist	*get_flist(t_flist *f, int fd);
 
 # endif

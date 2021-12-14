@@ -6,110 +6,71 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:15:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/09 15:03:40 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/14 10:38:16 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/*
-	read();
-	if (read char len == 1 && != \n)
-		read()
-	if (read char len > 1)
-		check string while != \n || != EOF
-		if (!\n && != EOF)
-			save string
-		if (\n)
-			save after \n and check before
-			save fd
-			return before \n
-		if (EOF)
-			check before and return before EOF
-			clear memory
-*/
-
-
-
-/*
-void	print_list() //FIXME delete
+void	expand_buffer(t_felement *elem, char *buf)
 {
-	t_flist *f = first;
-	printf("\n");
-	while (f)
-	{
-		int width1 = printf("fd = %d\n", f->fd);
-		int width2 = printf("br = %d\n", f->byte_read);
-		width1 = width1 > width2 ? width1 : width2;
-		for (int i = 0; i < width1; i++)
-			printf("-");
-		printf("\n");
-		f = f->next;
-	}
-} */
-
-char	*expand_buffer(t_flist *elem, char *buf, int bytes)
-{
-	char	*temp;
-	char	*res;
+	//FIX MALLOC PROTECTION
 	size_t	i;
-	
+
 	i = 0;
-	temp = (char *) malloc(ft_strlen(elem->buffer) + bytes + 1);
-	if (!temp)
-		return (NULL);
-	res = NULL;
-	temp[0] = 0;
-	ft_strncat(temp, elem->buffer, ft_strlen(elem->buffer));
-	ft_strncat(temp, buf, bytes);
-	free(elem->buffer);
-	while (temp[i] && temp[i] != '\n')
+	while (buf[i] && buf[i] != '\n')
 		i++;
-	if (temp[i] == '\n')
+	if (buf[i] == '\n')
 	{
-		elem->buffer = ft_strdup(&temp[i + 1]);
-		temp[i + 1] = 0;
-		res = ft_strdup(temp);
-		free(temp);
+		elem->line = ft_strjoin(elem->buffer, buf, i + 1);
+		elem->buffer = ft_strdup(&buf[i + 1]);
 	}
 	else
-		elem->buffer = temp;
-	return (res);
+		elem->buffer = ft_strjoin(elem->buffer, buf, ft_strlen(buf));
 }
 
-char *read_bfrsep(t_flist *elem)
+char	*read_bfrsep(t_felement *elem)
 {
 	int	read_bytecount;
 	char	*buf;
-	char	*res;
 
 	buf = (char *) malloc(BUFFER_SIZE + 1);
-	read_bytecount = 0;
+	if (elem->line)
+	{
+	//	free(elem->line); //POTENTIAL ERROR, DOUBLE FREE
+		elem->line = NULL;
+	}
 	if (!buf)
 		return (NULL);
 	while ((read_bytecount = read(elem->fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[read_bytecount] = 0;
-		res = expand_buffer(elem, buf, read_bytecount);
-		if (res)
+		expand_buffer(elem, buf);
+		if (elem->line)
 		{
 			free(buf);
-			return (res);
+			return (elem->line);
 		}
 	}
 	free(buf);
+	if (ft_strlen(elem->buffer) > 0)
+	{
+		elem->line = elem->buffer;
+		elem->buffer = ft_strdup(""); //protection!!
+		return (elem->line);
+	}
 	return (NULL);
 }
 
 char *get_next_line(int fd)
 {
-	static t_flist	*first; //FIXME move to gnl func
-	t_flist			*current;
+	static t_felement	*elem_arr[1025]; //FIXME CONST!!!!!!!
 
 	if (fd < 0)
 		return (NULL);
-	if (!first)
-		first = add_list_element(NULL, fd);
-	if(!(current = get_flist(first, fd)))
+	if (!elem_arr[fd])
+		elem_arr[fd]  = init_elem(fd);
+	return (read_bfrsep(elem_arr[fd]));	
+/*	if(!(current = get_flist(first, fd)))
 		current = add_list_element(first, fd);
 	return (read_bfrsep(current)); //FIXME existant fd
-}
+*/}

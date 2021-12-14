@@ -6,37 +6,27 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:16:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/09 14:58:51 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/14 10:35:10 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
 
-t_flist	*get_flist(t_flist *f, int fd)
+t_felement *init_elem(int fd)
 {
-	while (f && fd != f->fd)
-		f = f->next;
-	return (f);
-}
+	t_felement *elem;
 
-t_flist *add_list_element(t_flist *f, int fd)
-{
-	t_flist *element;
-
-	element = (t_flist *) malloc(sizeof(t_flist));
-	if (!element)
+	elem = (t_felement *) malloc(sizeof(t_felement));
+	if (!elem)
 		return (NULL);
-	element->fd = fd;
-	element->buffer = (char *) malloc(BUFFER_SIZE + 1);
-	if (!element->buffer)
+	elem->buffer = ft_strdup("");
+	elem->line = NULL;
+	if (!elem->buffer)
 	{
-		free(element);
+		free(elem);
 		return (NULL);
 	}
-	element->buffer[0] = 0;
-	element->next = NULL;
-	if (f)
-		f->next = element;
-	return (element);
+	elem->fd = fd;
+	return (elem);
 }
 
 size_t	ft_strlen(const char *str)
@@ -44,7 +34,7 @@ size_t	ft_strlen(const char *str)
 	int	length;
 
 	length = 0;
-	while (str[length])
+	while (str != NULL && str[length])
 		length++;
 	return (length);
 }
@@ -72,10 +62,37 @@ char	*ft_strdup(const char *src)
 
 	if (!src)
 		return (NULL);
-	dest = malloc((ft_strlen(src) + 1) * sizeof(char));
+	dest = (char *) malloc((ft_strlen(src) + 1) * sizeof(char));
 	if (dest == NULL)
 		return (NULL);
 	dest[0] = 0;
 	ft_strncat(dest, src, ft_strlen(src));
 	return (dest);
+}
+
+char	*ft_strjoin(char *to, char *from, size_t size)
+{
+	char	*res;
+	size_t	i;
+	size_t	to_len;
+
+	res = (char *) malloc(ft_strlen(from) + ft_strlen(to) + 1);
+	if (!res || !from || !to)
+		return (NULL);
+	i = 0;
+	to_len = ft_strlen(to);
+	while (i < to_len)
+	{
+		res[i] = to[i];
+		i++;
+	}
+	i = 0;
+	while (from[i] && i < size)
+	{
+		res[to_len + i] = from[i];
+		i++;
+	}
+	res[to_len + i] = 0;
+	free(to);
+	return (res);
 }

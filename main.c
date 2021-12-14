@@ -5,18 +5,24 @@
 
 int main(int ac, char **av)
 {
+
 	int fd_open1;
 	int fd_open2;
-	fd_open1 = open("test/test.txt", 'r');
+	char *res;
+	fd_open1 = open("gnlTester/files/multiple_nlx5", 'r');
 	if (fd_open1 <= 0)
 		printf("XYU");
 	else
-		printf("%s", get_next_line(fd_open1));
-//	printf("%s", get_next_line(fd_open1));
-//	printf("%s", get_next_line(fd_open1));
-//	print_list();
-	close(fd_open1);
-//	close(fd_open2);
-//	char *test = "123456789";
-//	printf("%d\n", find_char(test));
+	{
+		res = get_next_line(fd_open1);
+		int i = 1;
+		while (res)
+		{
+		printf("%d: %s", i++, res);
+		if (res)
+			free(res);		
+		res = get_next_line(fd_open1);
+		}
+		close(fd_open1);
+	}
 }
