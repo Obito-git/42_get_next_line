@@ -1,4 +1,0 @@
-#gcc -Wall -Werror -Wextra -D BUFFER_SIZE=$1 main.c get_next_line.c
-#!/bin/bash
-echo -n "[" && gcc -g main.c get_next_line.c get_next_line_utils.c
-valgrind -q --leak-check=full ./a.out && rm a.out  && echo -n "]"

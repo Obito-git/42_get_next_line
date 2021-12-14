@@ -1,3 +1,0 @@
-#gcc -Wall -Werror -Wextra -D BUFFER_SIZE=$1 main.c get_next_line.c
-#!/bin/bash
-echo -n "[" && gcc -g3 -fsanitize=address main.c get_next_line.c get_next_line_utils.c &&  ./a.out && rm a.out  && echo -n "]"
