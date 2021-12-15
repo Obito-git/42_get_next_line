@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:15:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/15 12:14:13 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/15 13:37:31 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*check_buffer(t_felement *elem, int nl_index)
 
 	tmp = NULL;
 	if (!elem->buffer)
-		return (free_memory(elem, tmp));
+		return (NULL);
 	if (nl_index >= 0)
 	{
 		tmp = ft_strdup(&elem->buffer[nl_index + 1]);
@@ -58,38 +58,60 @@ char	*check_buffer(t_felement *elem, int nl_index)
 char	*read_bfrsep(t_felement *elem)
 {
 	int		read_bytecount;
-	char	*buf;
 	int		nl_index;
 
-	buf = (char *) malloc(BUFFER_SIZE + 1);
-	if (!buf)
+	elem->buf_temp = (char *) malloc(BUFFER_SIZE + 1);
+	if (!elem->buf_temp)
 		return (free_memory(elem, NULL));
 	elem->line = NULL;
 	nl_index = get_nlpos(elem->buffer);
+	read_bytecount = 0;
 	while (nl_index < 0)
 	{
-		read_bytecount = read(elem->fd, buf, BUFFER_SIZE);
+		read_bytecount = read(elem->fd, elem->buf_temp, BUFFER_SIZE);
 		if (read_bytecount < 1)
 			break ;
 		if (!elem->buffer)
 			elem->buffer = ft_strdup("");
-		buf[read_bytecount] = 0;
-		elem->buffer = ft_strjoin(elem->buffer, buf, BUFFER_SIZE);
-		nl_index = get_nlpos(buf);
+		elem->buf_temp[read_bytecount] = 0;
+		elem->buffer = ft_strjoin(elem->buffer, elem->buf_temp, BUFFER_SIZE);
+		nl_index = get_nlpos(elem->buf_temp);
 		if (!elem->buffer)
 			return (free_memory(elem, NULL));
 	}
-	free(buf);
+	if (read_bytecount < 1)
+		elem->is_read = 1;
 	return (check_buffer(elem, get_nlpos(elem->buffer)));
 }
 
 char	*get_next_line(int fd)
 {
 	static t_felement	*elem_arr[MAX_FD + 1];
+	char				*res;
 
 	if (fd < 0 || fd > MAX_FD)
 		return (NULL);
 	if (!elem_arr[fd])
 		elem_arr[fd] = init_elem(fd);
-	return (read_bfrsep(elem_arr[fd]));
+	res = NULL;
+	read_bfrsep(elem_arr[fd]);
+	free(elem_arr[fd]->buf_temp);
+	elem_arr[fd]->buf_temp = NULL;
+	if (!elem_arr[fd]->line)
+	{
+		free_memory(elem_arr[fd], NULL);
+		free(elem_arr[fd]);
+		elem_arr[fd] = NULL;
+		return (NULL);
+	}
+	if (elem_arr[fd]->is_read && !elem_arr[fd]->buffer)
+	{
+		res = ft_strdup(elem_arr[fd]->line);
+		free_memory(elem_arr[fd], NULL);
+		free(elem_arr[fd]);
+		elem_arr[fd] = NULL;
+		return (res);
+	}
+//	printf("3");
+	return (elem_arr[fd]->line);
 }

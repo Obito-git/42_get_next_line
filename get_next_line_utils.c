@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:16:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/15 12:02:09 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/15 13:15:48 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -18,7 +18,9 @@ t_felement	*init_elem(int fd)
 	elem = (t_felement *) malloc(sizeof(t_felement));
 	if (!elem)
 		return (NULL);
+	elem->is_read = 0;
 	elem->buffer = NULL;
+	elem->buf_temp = NULL;
 	elem->line = NULL;
 	elem->fd = fd;
 	return (elem);
@@ -32,6 +34,9 @@ char	*free_memory(t_felement *elem, char *tmp)
 		free(elem->line);
 	if (tmp)
 		free(tmp);
+	if (elem->buf_temp)
+		free(elem->buf_temp);
+	elem->buf_temp = NULL;
 	elem->buffer = NULL;
 	elem->line = NULL;
 	tmp = NULL;
