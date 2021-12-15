@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:15:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/15 13:37:31 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/15 13:44:56 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,25 +93,14 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (!elem_arr[fd])
 		elem_arr[fd] = init_elem(fd);
-	res = NULL;
 	read_bfrsep(elem_arr[fd]);
 	free(elem_arr[fd]->buf_temp);
 	elem_arr[fd]->buf_temp = NULL;
-	if (!elem_arr[fd]->line)
-	{
-		free_memory(elem_arr[fd], NULL);
-		free(elem_arr[fd]);
-		elem_arr[fd] = NULL;
-		return (NULL);
-	}
-	if (elem_arr[fd]->is_read && !elem_arr[fd]->buffer)
-	{
-		res = ft_strdup(elem_arr[fd]->line);
-		free_memory(elem_arr[fd], NULL);
-		free(elem_arr[fd]);
-		elem_arr[fd] = NULL;
-		return (res);
-	}
-//	printf("3");
-	return (elem_arr[fd]->line);
+	if ((elem_arr[fd]->line) || (!elem_arr[fd]->is_read && elem_arr[fd]->buffer))
+		return (elem_arr[fd]->line);
+	res = ft_strdup(elem_arr[fd]->line);
+	free_memory(elem_arr[fd], NULL);
+	free(elem_arr[fd]);
+	elem_arr[fd] = NULL;
+	return (res);
 }
