@@ -6,7 +6,7 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:16:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/14 12:26:02 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/15 12:02:09 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -18,29 +18,24 @@ t_felement	*init_elem(int fd)
 	elem = (t_felement *) malloc(sizeof(t_felement));
 	if (!elem)
 		return (NULL);
-	elem->buffer = ft_strdup("");
-	if (!elem->buffer)
-	{
-		free(elem);
-		return (NULL);
-	}
+	elem->buffer = NULL;
 	elem->line = NULL;
 	elem->fd = fd;
 	return (elem);
 }
 
-int	get_nlpos(char *str)
+char	*free_memory(t_felement *elem, char *tmp)
 {
-	size_t	i;
-
-	i = 0;
-	if (!str)
-		return (-1);
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (str[i] == '\n')
-		return (i);
-	return (-1);
+	if (elem->buffer)
+		free(elem->buffer);
+	if (elem->line)
+		free(elem->line);
+	if (tmp)
+		free(tmp);
+	elem->buffer = NULL;
+	elem->line = NULL;
+	tmp = NULL;
+	return (NULL);
 }
 
 size_t	ft_strlen(const char *str)

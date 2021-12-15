@@ -6,37 +6,51 @@
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 17:15:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/14 18:24:33 by amyroshn         ###   ########.fr       */
+/*   Updated: 2021/12/15 12:14:13 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*check_buffer(t_felement *elem, int nl_index, int bytes)
+int	get_nlpos(char *str)
+{
+	size_t	i;
+
+	i = 0;
+	if (!str)
+		return (-1);
+	while (str[i] && str[i] != '\n')
+		i++;
+	if (str[i] == '\n')
+		return (i);
+	return (-1);
+}
+
+char	*check_buffer(t_felement *elem, int nl_index)
 {
 	char	*tmp;
 
-	if (ft_strlen(elem->buffer) == 0)
-		return (NULL);
+	tmp = NULL;
+	if (!elem->buffer)
+		return (free_memory(elem, tmp));
 	if (nl_index >= 0)
 	{
 		tmp = ft_strdup(&elem->buffer[nl_index + 1]);
-		if (!tmp)
-			return (NULL);
 		elem->buffer[nl_index + 1] = 0;
 		elem->line = ft_strdup(elem->buffer);
-		if (!elem->line)
-			return (NULL);
+		if (!tmp || !elem->line)
+			return (free_memory(elem, tmp));
 		free(elem->buffer);
-		elem->buffer = tmp;
+		elem->buffer = NULL;
+		if (ft_strlen(tmp) == 0)
+			free(tmp);
+		else
+			elem->buffer = tmp;
 	}
 	else
 	{
 		elem->line = elem->buffer;
-		if (bytes < BUFFER_SIZE)
-			elem->buffer = ft_strdup("");
-		if (bytes == BUFFER_SIZE && !elem->buffer)
-			return (NULL);
+		elem->buffer = NULL;
 	}
 	return (elem->line);
 }
@@ -49,23 +63,24 @@ char	*read_bfrsep(t_felement *elem)
 
 	buf = (char *) malloc(BUFFER_SIZE + 1);
 	if (!buf)
-		return (NULL);
-	if (elem->line)
-		elem->line = NULL;
+		return (free_memory(elem, NULL));
+	elem->line = NULL;
 	nl_index = get_nlpos(elem->buffer);
 	while (nl_index < 0)
 	{
 		read_bytecount = read(elem->fd, buf, BUFFER_SIZE);
 		if (read_bytecount < 1)
-			break;
+			break ;
+		if (!elem->buffer)
+			elem->buffer = ft_strdup("");
 		buf[read_bytecount] = 0;
 		elem->buffer = ft_strjoin(elem->buffer, buf, BUFFER_SIZE);
+		nl_index = get_nlpos(buf);
 		if (!elem->buffer)
-			return (NULL);
-		nl_index = get_nlpos(elem->buffer);
+			return (free_memory(elem, NULL));
 	}
 	free(buf);
-	return (check_buffer(elem, nl_index, read_bytecount));
+	return (check_buffer(elem, get_nlpos(elem->buffer)));
 }
 
 char	*get_next_line(int fd)
