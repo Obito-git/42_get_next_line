@@ -1,15 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/06 17:16:56 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/12/15 14:08:10 by amyroshn         ###   ########.fr       */
+/*   Created: 2021/12/15 14:15:11 by amyroshn          #+#    #+#             */
+/*   Updated: 2021/12/15 14:15:19 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 t_felement	*init_elem(int fd)
 {
